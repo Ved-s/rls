@@ -418,7 +418,7 @@ pub struct CircuitCtx<'a, C: CircuitImpl> {
     pub instance: &'a C::Instance,
 }
 
-impl<'a, C: CircuitImpl> CircuitCtx<'a, C> {
+impl<C: CircuitImpl> CircuitCtx<'_, C> {
     fn set_pin_output(&mut self, pin: &CircuitPin, state: WireState) {
         pin.set_output(self.state, self.tasks, state);
     }

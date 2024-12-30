@@ -28,6 +28,7 @@ pub mod pool;
 pub mod state;
 pub mod simulation;
 pub mod path;
+// mod io;
 
 pub const CHUNK_SIZE: usize = 16;
 pub const WIRE_WIDTH: f32 = 0.2;
@@ -178,7 +179,7 @@ pub struct PaintContext<'a> {
     pub style: Arc<Style>,
 }
 
-impl<'a> Deref for PaintContext<'a> {
+impl Deref for PaintContext<'_> {
     type Target = Painter;
 
     fn deref(&self) -> &Self::Target {
@@ -683,7 +684,7 @@ impl<T> Direction8Array<T> {
 }
 
 #[derive(Default)]
-pub struct Direction4HalfArray<T>([T; 4]);
+pub struct Direction4HalfArray<T>(pub [T; 4]);
 
 impl<T> Direction4HalfArray<T> {
     pub fn get(&self, dir: Direction4Half) -> &T {

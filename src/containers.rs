@@ -199,10 +199,10 @@ impl<T> FixedVec<T> {
 
         self.test_free_correct();
 
-        return VecSetResult {
+        VecSetResult {
             value_ref: self.inner[pos].as_mut().unwrap(),
             prev,
-        };
+        }
     }
 
     fn update_first_free_set(&mut self, into: usize) {
@@ -233,7 +233,7 @@ impl<T> FixedVec<T> {
     }
 
     fn test_free_correct(&self) {
-        assert!(!self.first_free.is_some_and(|v| self.get(v).is_some()));
+        assert!(self.first_free.is_none_or(|v| self.get(v).is_none()));
     }
 
     pub fn clear(&mut self) {

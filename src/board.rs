@@ -192,6 +192,18 @@ impl Wire {
             .write()
             .retain(|p| !(p.circuit.id == circuit_id && p.id == pin_id));
     }
+
+    // pub fn save(&self) -> crate::io::Wire {
+    //     crate::io::Wire {
+    //         id: self.id,
+    //         points: self
+    //             .points
+    //             .read()
+    //             .iter()
+    //             .map(|(pos, point)| (*pos, point.directions.0))
+    //             .collect(),
+    //     }
+    // }
 }
 
 #[derive(Default)]

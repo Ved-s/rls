@@ -23,6 +23,11 @@ impl App {
             Arc::new(RwLock::new(crate::circuits::test::TestCircuit.into())),
             Arc::new(RwLock::new(crate::circuits::button::Button.into())),
             Arc::new(RwLock::new(crate::circuits::gates::Gate::and().into())),
+            Arc::new(RwLock::new(crate::circuits::gates::Gate::nand().into())),
+            Arc::new(RwLock::new(crate::circuits::gates::Gate::or().into())),
+            Arc::new(RwLock::new(crate::circuits::gates::Gate::nor().into())),
+            Arc::new(RwLock::new(crate::circuits::gates::Gate::xor().into())),
+            Arc::new(RwLock::new(crate::circuits::gates::Gate::xnor().into())),
         ];
 
         Self {

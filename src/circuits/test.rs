@@ -6,7 +6,7 @@ use crate::{editor::QuarterPos, ext::IteratorProduct, pool::get_pooled, state::W
 
 use super::{Circuit, CircuitCtx, CircuitFlipSupport, CircuitImpl, CircuitPin, CircuitRenderingContext, CircuitRotationSupport, CircuitTransform, CircuitTransformSupport, FlipType, PinDescription, PinType, TransformSupport};
 
-
+#[allow(unused)]
 pub struct TestCircuitInstance {
     pin_a: Arc<CircuitPin>,
     pin_b: Arc<CircuitPin>,

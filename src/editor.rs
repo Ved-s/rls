@@ -510,7 +510,7 @@ impl BoardEditor {
                             continue;
                         };
                         let points = wire.points.read().len();
-                        if !max_points.is_some_and(|mp| points <= mp) {
+                        if max_points.is_none_or(|mp| points > mp) {
                             max_points = Some(points);
                             biggest_wire = Some(wire.clone());
                         }
@@ -683,7 +683,7 @@ impl BoardEditor {
 
             for wire in iter.clone() {
                 let points = wire.points.read().len();
-                if !max_points.is_some_and(|mp| points <= mp) {
+                if max_points.is_none_or(|mp| points > mp) {
                     max_points = Some(points);
                     merge_into = Some(wire.clone());
                 }
@@ -720,7 +720,7 @@ impl BoardEditor {
 
         for pin in pins_from.drain(..) {
             let mut pin_wire = pin.wire.write();
-            if !pin_wire.as_ref().is_some_and(|w| w.id == from.id) {
+            if pin_wire.as_ref().is_none_or(|w| w.id != from.id) {
 
                 // Weird pin connected to a different wire?
                 continue;
@@ -748,7 +748,7 @@ impl BoardEditor {
         while let Some(pos) = positions.iter().next().copied() {
             positions.remove(&pos);
 
-            if !self.wires.get(pos).is_some_and(|n| n.wire.is_some()) {
+            if self.wires.get(pos).is_none_or(|n| n.wire.is_none()) {
                 continue;
             };
 

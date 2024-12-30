@@ -180,7 +180,7 @@ impl TabImpl for ErrorTab {
 
 pub struct TabViewer<'a>(pub &'a mut App);
 
-impl<'a> egui_dock::TabViewer for TabViewer<'a> {
+impl egui_dock::TabViewer for TabViewer<'_> {
     type Tab = Tab;
 
     fn id(&mut self, tab: &mut Self::Tab) -> Id {

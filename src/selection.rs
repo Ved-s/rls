@@ -141,7 +141,7 @@ impl<I: SelectionImpl> Selection<I> {
             Stroke::new(2.0, ctx.style.selection_border),
         );
     }
-    
+
     pub fn clear(&mut self) {
         self.selection.clear();
         self.change.clear();
@@ -258,9 +258,9 @@ impl SelectionRenderer {
         unsafe {
             let gl = ctx.painter.gl();
 
-            if !self
+            if self
                 .last_screen_size
-                .is_some_and(|s| s == ctx.paint_info.screen_size_px)
+                .is_none_or(|s| s != ctx.paint_info.screen_size_px)
             {
                 gl.bind_texture(glow::TEXTURE_2D, Some(self.texture));
                 gl.tex_image_2d(

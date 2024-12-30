@@ -51,7 +51,7 @@ pub trait Path: Sized {
                 Vec2f::new(x2, y2),
                 Vec2f::new(x3, y3),
             ],
-            quadratic: true,
+            quadratic: false,
             straightness,
         }
     }
@@ -149,7 +149,7 @@ impl<I: Iterator<Item = Vec2f>> Iterator for BezierLineIter<I> {
             } => match before.next() {
                 Some(v) => {
                     *last_point = Some(v);
-                    return Some(v);
+                    Some(v)
                 }
                 None => {
                     let Some(a) = last_point else {

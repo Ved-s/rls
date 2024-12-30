@@ -16,6 +16,7 @@ parking_lot = { version = "0.12.3", features = ["arc_lock", "serde"] }
 paste = "1.0.15"
 ron = "0.8.1"
 serde = { version = "1.0.203", features = ["derive"] }
-thiserror = "1.0.61"
+thiserror = "1.0.63"
 
 traitbox = { path = "crates/traitbox" }
+smoldata = { git = "https://github.com/Ved-s/smoldata.git" }

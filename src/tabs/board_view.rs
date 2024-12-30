@@ -14,6 +14,7 @@ use eframe::{
     },
     epaint::TextShape,
 };
+use num_traits::Zero;
 use parking_lot::{Mutex, RwLock};
 
 use crate::{
@@ -61,6 +62,8 @@ pub struct BoardView {
     wire_colors: BTreeMap<usize, Color32>,
 
     last_placement_error: Option<(Instant, String)>,
+
+    camera_move_velocity: Vec2f,
 }
 
 impl TabCreation for BoardView {
@@ -96,6 +99,8 @@ impl TabCreation for BoardView {
             circuits_drawn: HashSet::new(),
             wire_colors: BTreeMap::new(),
             last_placement_error: None,
+
+            camera_move_velocity: Vec2f::zero(),
         }
     }
 }
@@ -108,11 +113,16 @@ impl TabImpl for BoardView {
             ui.id().with("board-interaction"),
             Sense::click_and_drag(),
         );
+
+        let dragged = app.selected_item.is_none()
+            && interaction.dragged_by(PointerButton::Primary)
+                || interaction.dragged_by(PointerButton::Secondary);
+
         if self.fixed_screen_pos.is_none() || ui.input(|input| input.modifiers.alt) {
             self.pan_zoom.update(
                 ui,
                 screen_rect,
-                interaction.dragged_by(PointerButton::Secondary),
+                dragged,
                 &interaction,
             );
         }
@@ -146,7 +156,7 @@ impl TabImpl for BoardView {
                     pan_zoom.update(
                         ui,
                         screen_rect,
-                        interaction.dragged_by(PointerButton::Secondary),
+                        dragged,
                         &interaction,
                     );
                 }
@@ -155,6 +165,26 @@ impl TabImpl for BoardView {
                 screen
             }
         };
+
+        let active_pan_zoom = if ui.input(|input| input.modifiers.alt) {
+            &mut self.pan_zoom
+        } else if let Some((_, pz)) = &mut self.fixed_screen_pos {
+            pz
+        } else {
+            &mut self.pan_zoom
+        };
+
+        if !dragged {
+            // TODO: adjustable
+            active_pan_zoom.center_pos += self.camera_move_velocity / screen.scale;
+            self.camera_move_velocity *= 0.84;
+        } else {
+            self.camera_move_velocity = (-interaction.drag_delta()).into();
+        }
+
+        if self.camera_move_velocity.length_squared() > f32::EPSILON {
+            ui.ctx().request_repaint();
+        }
 
         if self.fixed_screen_pos.is_some() {
             ui.painter().rect_stroke(
@@ -751,11 +781,10 @@ impl BoardView {
 
                     for (pos, node) in editor.circuits().iter_area(circuit_pos, info.size) {
                         for qpos in QuarterPos::ALL {
-                            if !node
+                            if node
                                 .quarters
                                 .get(qpos)
-                                .as_ref()
-                                .is_some_and(|q| q.circuit.id == circuit.id)
+                                .as_ref().is_none_or(|q| q.circuit.id != circuit.id)
                             {
                                 continue;
                             }
@@ -841,7 +870,7 @@ impl BoardView {
                         rgb[1] = 255;
                     }
                 }
-                if !backend_point_connected.is_some_and(|p| !p) {
+                if backend_point_connected.is_none_or(|p| p) {
                     rgb[2] = 255;
                 }
 
@@ -1102,7 +1131,7 @@ impl BoardView {
                 length
             };
             let length = length.round() as u32;
-            
+
             if length > 0 {
                 let place = !ctx.ui.input(|input| input.modifiers.shift);
                 let end = start + direction.into_dir_isize() * length as isize;
@@ -1368,6 +1397,26 @@ impl BoardView {
     }
 
     fn handle_keyboard(&mut self, ui: &mut Ui, app: &mut App) {
+        // TODO: adjustable
+
+        let speedup = 4.0;
+
+        if ui.input(|input| input.key_down(Key::W)) {
+            self.camera_move_velocity.y -= speedup;
+        }
+
+        if ui.input(|input| input.key_down(Key::A)) {
+            self.camera_move_velocity.x -= speedup;
+        }
+
+        if ui.input(|input| input.key_down(Key::S)) {
+            self.camera_move_velocity.y += speedup;
+        }
+
+        if ui.input(|input| input.key_down(Key::D)) {
+            self.camera_move_velocity.x += speedup;
+        }
+
         if ui.input(|input| input.key_pressed(Key::Delete))
             && self.selection.iter().next().is_some()
         {

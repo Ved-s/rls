@@ -10,7 +10,7 @@ pub enum ArcRefStr<'a> {
     Arc(Arc<str>),
 }
 
-impl<'a> Deref for ArcRefStr<'a> {
+impl Deref for ArcRefStr<'_> {
     type Target = str;
 
     fn deref(&self) -> &Self::Target {
@@ -27,13 +27,13 @@ impl<'a> From<&'a str> for ArcRefStr<'a> {
     }
 }
 
-impl<'a> From<Arc<str>> for ArcRefStr<'a> {
+impl From<Arc<str>> for ArcRefStr<'_> {
     fn from(value: Arc<str>) -> Self {
         Self::Arc(value)
     }
 }
 
-impl<'a> From<String> for ArcRefStr<'a> {
+impl From<String> for ArcRefStr<'_> {
     fn from(value: String) -> Self {
         Self::Arc(value.into())
     }
@@ -48,7 +48,7 @@ impl<'a> From<ArcRefStr<'a>> for Arc<str> {
     }
 }
 
-impl<'a> Serialize for ArcRefStr<'a> {
+impl Serialize for ArcRefStr<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer {
@@ -56,7 +56,7 @@ impl<'a> Serialize for ArcRefStr<'a> {
     }
 }
 
-impl<'de, 'a> Deserialize<'de> for ArcRefStr<'a> {
+impl<'de> Deserialize<'de> for ArcRefStr<'_> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de> {
@@ -64,13 +64,13 @@ impl<'de, 'a> Deserialize<'de> for ArcRefStr<'a> {
     }
 }
 
-impl<'a> Display for ArcRefStr<'a> {
+impl Display for ArcRefStr<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         Display::fmt(self.deref(), f)
     }
 }
 
-impl<'a> Debug for ArcRefStr<'a> {
+impl Debug for ArcRefStr<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             ArcRefStr::Ref(r) => {

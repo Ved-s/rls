@@ -1,5 +1,3 @@
-pub mod and;
-
 use std::sync::Arc;
 
 use traitbox::traitbox;
@@ -7,6 +5,13 @@ use traitbox::traitbox;
 use crate::{state::WireState, str::ArcStaticStr, vector::Vec2usize, Direction8};
 
 use super::{Circuit, CircuitCtx, CircuitImpl, CircuitPin, CircuitRenderingContext, CircuitTransform, PinDescription, PinType};
+
+pub mod and;
+pub mod nand;
+pub mod or;
+pub mod nor;
+pub mod xor;
+pub mod xnor;
 
 struct GateOutput {
     out: bool,
@@ -51,6 +56,26 @@ impl Gate {
     pub fn and() -> Self {
         Self { imp: GateImplBox::new(and::And) }
     }
+
+    pub fn nand() -> Self {
+        Self { imp: GateImplBox::new(nand::Nand) }
+    }
+
+    pub fn or() -> Self {
+        Self { imp: GateImplBox::new(or::Or) }
+    }
+
+    pub fn nor() -> Self {
+        Self { imp: GateImplBox::new(nor::Nor) }
+    }
+
+    pub fn xor() -> Self {
+        Self { imp: GateImplBox::new(xor::Xor) }
+    }
+
+    pub fn xnor() -> Self {
+        Self { imp: GateImplBox::new(xnor::Xnor) }
+    }
 }
 
 pub struct GateInstance {
@@ -75,6 +100,7 @@ impl CircuitImpl for Gate {
         [4, 3].into()
     }
 
+    // TODO: more precise occupation check
     fn occupies_quarter(&self, _: CircuitTransform, qpos: Vec2usize) -> bool {
         qpos.x != 0 && qpos.x != 7
     }

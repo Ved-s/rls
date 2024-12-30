@@ -7,15 +7,15 @@ use crate::{circuits::CircuitRenderingContext, path::{Path, PointPath}};
 use super::{GateImpl, GateOutput};
 
 #[derive(Clone)]
-pub struct And;
+pub struct Nand;
 
-impl GateImpl for And {
+impl GateImpl for Nand {
     fn id() -> &'static str {
-        "gate_and"
+        "gate_nand"
     }
 
     fn display_name() -> &'static str {
-        "AND gate"
+        "NAND gate"
     }
 
     fn init_state() -> bool {
@@ -23,7 +23,7 @@ impl GateImpl for And {
     }
 
     fn fold(_: &mut bool, input: bool) -> GateOutput {
-        if input {
+        if !input {
             GateOutput {
                 out: true,
                 fin: false,
@@ -45,8 +45,8 @@ impl GateImpl for And {
 
         let path = PointPath::new(0.5, 0.0)
             .line_to(size.x * 0.4, 0.0)
-            .quadratic_bezier(size.x - 0.5, 0.0, size.x - 0.5, size.y / 2.0, straightness)
-            .quadratic_bezier(size.x - 0.5, size.y, size.x * 0.4, size.y, straightness)
+            .quadratic_bezier(size.x - 0.75, 0.0, size.x - 0.75, size.y / 2.0, straightness)
+            .quadratic_bezier(size.x - 0.75, size.y, size.x * 0.4, size.y, straightness)
             .line_to(0.5, size.y);
 
         let points = path.iter_points(|v| ctx.transform_pos(v)).map(Into::into).collect();
@@ -59,5 +59,13 @@ impl GateImpl for And {
         };
 
         ctx.paint.painter.add(path);
+
+        let circle_pos = ctx.transform_pos([size.x - 0.68, size.y / 2.0].into());
+        ctx.paint.circle(
+            circle_pos.into(),
+            0.2 * ctx.paint.screen.scale,
+            fill_color,
+            Stroke::new(0.15 * ctx.paint.screen.scale, border_color),
+        );
     }
 }

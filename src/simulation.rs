@@ -38,5 +38,7 @@ impl SimulationCtx {
         
     }
     
-    
+    // pub fn save(&self) -> crate::io::Simulation {
+
+    // }
 }
